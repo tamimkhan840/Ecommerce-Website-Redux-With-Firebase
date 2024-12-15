@@ -1,67 +1,51 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { getFireBaseData, onRemoveFromFirebase } from "../../database/firebaseUtils";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+    getFirebaseData,
+    removeDataFromFirebase,
+} from "../../database/firebaseUtils";
+import { handleAsyncThunk } from "./handleCategoriesThunk";
 
+const initialState = {
+    categories: [],
+    isLoading: false,
+    isError: false,
+    error: null,
+};
 
+export const getCategories = createAsyncThunk(
+    "categories/getCategories",
+    async () => {
+        let data = await getFirebaseData("categories");
+        return data;
+    }
+);
 
-    const initialState = {
-        isLoading: false,
-        isError: false,
-        error: '',
-        categories: [],
-    };
-
-
-export const getCategories = createAsyncThunk("Categories/getCategories",
-    async () =>{
-    let data = await getFireBaseData('categories');
-    // console.log(data);
-
-    return data
-});
-export const deleteCategories = createAsyncThunk("Categories/deleteCategories",
-    async (id) =>{
-    let conn = await onRemoveFromFirebase('categories/' + id);
-    console.log(conn);
-
-    return id
-});
-
-
+export const deleteCategories = createAsyncThunk(
+    "categories/deleteCategories",
+    async (id) => {
+        const conn = await removeDataFromFirebase("categories/" + id);
+        return id;
+    }
+);
 
 const categoriesSlice = createSlice({
     name: "categories",
     initialState,
-    reducers: {},
-    extraReducers: (builder) =>{
-    builder
-        .addCase(getCategories.pending,(state, action) =>{
-            state.isError = false;
-            state.isLoading = true;
-        })
-        .addCase(getCategories.fulfilled,(state, action) =>{
-            state.isLoading = false;
-            state.categories = action.payload;
+    reducers: {
+        deleteCategory: (state, action) => {
+            const categoryIndex = state.categories.findIndex(
+                (item) => item.id == action.payload
+            );
 
-        })
-        .addCase(getCategories.rejected,(state, action) =>{
-            state.isError = true;
-            state.error = action.payload.error?.message;
-        })
-
-    builder
-
-        .addCase(deleteCategories.fulfilled,(state, action) =>{
-            const categoryIndex = state.categories.findIndex(item => item.id == action.payload)
-            state.categories.splice(categoryIndex, 1)
-
-
-
-        })
-        .addCase(deleteCategories.rejected,(state, action) =>{
-            state.isError = true;
-            state.error = action.payload.error?.message;
-        })
-    }
-})
+            state.categories.splice(categoryIndex, 1);
+        },
+    },
+    extraReducers: (builder) => {
+        handleAsyncThunk(builder, getCategories);
+        // handleAsyncThunk(builder, deleteCategories);
+    },
+});
 
 export default categoriesSlice.reducer;
+
+export const { deleteCategory } = categoriesSlice.actions;

@@ -1,61 +1,67 @@
-import { useForm } from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup"
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
 
+import { categoryFormSchema } from "../../../validation/validationSchema";
 
-// import app from "../database/firebaseConfig";
-import { categoryFormSchema } from "../validation/validationSchema";
-import {  getFromData, getFromFireBaseData, updateDataFromFirebase } from "../database/firebaseUtils";
 import { useNavigate, useParams } from "react-router";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-
+import {
+    getFirebaseDataForEdit,
+    setDataToFirebase,
+    updateDataFromFirebase,
+} from "../../../database/firebaseUtils";
 
 export default function CreateCategory() {
-    const navigate = useNavigate()
-    const params = useParams()
-    
-
+    const navigate = useNavigate();
+    const params = useParams();
     const {
-      register,
-      handleSubmit,
-      formState: { errors },
-      reset,
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset,
     } = useForm({
-      resolver: yupResolver(categoryFormSchema),
-      defaultValues:{
-        categoryName: "",
-        categoryImageUrl: ""
-      }
-    })
-    useEffect(()=> {
-        async function getDataFromDataBase() {
-            let res = await getFromFireBaseData("categories/" + params.id)
-            reset(res)
-        }
-        if (params.id) {
-            getDataFromDataBase()
-        }
-        else{
-            reset({
-                 categoryName: "",
-              categoryImageUrl: ""
-            })
+        resolver: yupResolver(categoryFormSchema),
+        defaultValues: {
+            categoryName: "",
+            categoryImageUrl: "",
+        },
+    });
 
-        }
-    },[params, reset])
     const onSubmit = (data) => {
         if (params.id) {
+            // Update category;
             updateDataFromFirebase(`categories/${params.id}`, data);
-            toast.success("Update is successful")
+            toast.success("Update is successful");
         } else {
-            getFromData("categories", data);
-            toast.success("Creation is successful")
+            // Create category;
+            setDataToFirebase("categories", data);
+            toast.success("Creation is successful");
         }
-        navigate(-1)
+        navigate("/");
     };
+
+    useEffect(() => {
+        async function getData() {
+            let res = await getFirebaseDataForEdit("categories/" + params.id);
+            reset(res);
+        }
+
+        if (params.id) {
+            getData();
+        } else {
+            reset({
+                categoryName: "",
+                categoryImageUrl: "",
+            });
+        }
+    }, [params]);
+
     return (
         <div className="max-w-md mx-auto mt-10 p-6 bg-gray-100 shadow-md rounded-lg">
-            <h2 className="text-2xl font-bold mb-4 text-center">{params.id ?"Edit Product" :"Add Product"}</h2>
+            <h2 className="text-2xl font-bold mb-4 text-center">
+                {params.id ? "Edit Category" : "Add Category"}
+            </h2>
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
                 {/* Product Name */}
                 <div>
@@ -106,10 +112,10 @@ export default function CreateCategory() {
 
                 {/* Submit Button */}
                 <button
-
+                    type="submit"
                     className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
                 >
-                   {params.id ? "Update Product":"Submit"}
+                    {params.id ? "Update Category" : "Add Category"}
                 </button>
             </form>
         </div>

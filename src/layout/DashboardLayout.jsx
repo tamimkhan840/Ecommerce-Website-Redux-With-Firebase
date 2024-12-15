@@ -1,9 +1,7 @@
 import { Link, Outlet } from "react-router";
 import { ToastContainer } from "react-toastify";
 
-
 export default function DashboardLayout() {
-
     return (
         <>
             <header className="bg-white shadow-md py-4">
@@ -31,7 +29,6 @@ export default function DashboardLayout() {
                     </div>
                 </div>
             </header>
-
             <div className="py-5">
                 <Outlet />
                 <ToastContainer />
