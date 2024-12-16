@@ -68,3 +68,24 @@ export const removeDataFromFirebase = (tableName) => {
         }
     });
 };
+
+// ******************************* User Profile *************************** //
+export const createUserProfile = async (data) => {
+    const { id, name, role } = data;
+    set(ref(db, "userProfile/" + id), {
+        name,
+        role,
+    });
+};
+
+export const getProfile = async (id) => {
+    return new Promise((resolve, reject) => {
+        try {
+            onValue(ref(db, "userProfile/" + id), (snapshot) => {
+                resolve(snapshot.val());
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};

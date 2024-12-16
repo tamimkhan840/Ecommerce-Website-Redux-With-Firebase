@@ -38,7 +38,6 @@ export default function CreateProduct() {
         } else {
             // Create product;
             dispatch(setProducts(data));
-            toast.success("Creation is successful");
         }
 
         reset();

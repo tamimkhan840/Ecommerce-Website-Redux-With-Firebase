@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import {  NavLink } from "react-router";
+import { Link, NavLink } from "react-router";
 import Modal from "../../../component/Modal";
 import { removeDataFromFirebase } from "../../../database/firebaseUtils";
 import {

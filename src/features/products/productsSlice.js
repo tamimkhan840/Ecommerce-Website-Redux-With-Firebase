@@ -11,7 +11,12 @@ const initialState = {
     error: null,
 };
 
-
+// export const setProducts = createAsyncThunk(
+//     "products/setProducts",
+//     async (data) => {
+//         const response = await setDataToFirebase("products", data);
+//     }
+// );
 
 export const getProducts = createAsyncThunk(
     "products/getProducts",
