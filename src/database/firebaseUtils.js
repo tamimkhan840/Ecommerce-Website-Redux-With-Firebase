@@ -8,7 +8,7 @@ import {
 } from "firebase/database";
 import app from "./firebaseConfig";
 
-const db = getDatabase(app);
+export const db = getDatabase(app);
 
 // Read/Get data from database;
 export const getFirebaseData = async (tableName) => {
@@ -71,10 +71,11 @@ export const removeDataFromFirebase = (tableName) => {
 
 // ******************************* User Profile *************************** //
 export const createUserProfile = async (data) => {
-    const { id, name, role } = data;
+    const { id, name, role, email } = data;
     set(ref(db, "userProfile/" + id), {
         name,
         role,
+        email,
     });
 };
 

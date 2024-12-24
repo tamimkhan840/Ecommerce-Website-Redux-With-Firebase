@@ -57,15 +57,11 @@ const loginUser = async ({ email, password }) => {
 };
 
 const logOutUser = async () => {
-    try {
-        await signOut(auth);
-        return { success: true };
-    } catch (error) {
-        return {
-            error: true,
-            message: error.message,
-        };
-    }
+    signOut(auth)
+        .then(() => {})
+        .catch((error) => {
+            // An error happened.
+        });
 };
 
 export { registerUser, logOutUser, loginUser, auth };

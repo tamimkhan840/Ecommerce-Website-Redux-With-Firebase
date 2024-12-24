@@ -9,6 +9,7 @@ export const productFormSchema = Yup.object({
     productName: Yup.string().required(),
     productPrice: Yup.number().required(),
     productImageUrl: Yup.string().required().url(),
+    productCategory: Yup.string().required(),
 }).required();
 
 export const registerValidation = Yup.object({

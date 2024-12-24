@@ -1,16 +1,18 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { loginValidation } from "../../validation/validationSchema";
-import { loginUser } from "../../database/firebaseAuth";
+import { auth, loginUser } from "../../database/firebaseAuth";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { getProfile } from "../../database/firebaseUtils";
+import { createUserProfile, getProfile } from "../../database/firebaseUtils";
 import { useNavigate } from "react-router";
 import { setLoginUserDataToRedux } from "../../features/auth/authSlice";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const googleAuthProvider = new GoogleAuthProvider();
 
     const {
         register,
@@ -39,6 +41,45 @@ const Login = () => {
             dispatch(setLoginUserDataToRedux(loginUserInfo));
             reset();
             navigate("/dashboard");
+        }
+    };
+
+    const googleLogin = async () => {
+        try {
+            const res = await signInWithPopup(auth, googleAuthProvider);
+            const user = res.user;
+
+            const newUser = {
+                id: user.uid,
+                name: user.displayName,
+                email: user.email,
+            };
+
+            const userProfile = await getProfile(user.uid);
+
+            if (!userProfile || userProfile.email != user.email) {
+                // Create a new user;
+                createUserProfile(newUser);
+                dispatch(
+                    setLoginUserDataToRedux({
+                        ...newUser,
+                        role: "user",
+                    })
+                );
+            } else {
+                // Just set user information to redux;
+                dispatch(
+                    setLoginUserDataToRedux({
+                        ...newUser,
+                        role: userProfile.role,
+                    })
+                );
+            }
+
+            toast.success("You are logged in");
+            navigate("/dashboard");
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -106,7 +147,10 @@ const Login = () => {
                     <hr className="w-full border-gray-300" />
                 </div>
 
-                <button className="mt-4 w-full py-2 px-4 bg-red-600 text-white font-semibold rounded-md shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                <button
+                    onClick={() => googleLogin()}
+                    className="mt-4 w-full py-2 px-4 bg-red-600 text-white font-semibold rounded-md shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
                     Login with Google
                 </button>
 

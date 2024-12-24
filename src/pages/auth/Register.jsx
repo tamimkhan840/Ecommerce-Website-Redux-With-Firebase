@@ -32,6 +32,7 @@ const Register = () => {
             // already registered;
             createUserProfile(res);
             reset();
+            toast.success("You are successfully registered");
             navigate("/login");
         }
     };
