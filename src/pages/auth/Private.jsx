@@ -5,17 +5,17 @@ export default function Private() {
     const authUser = useSelector((state) => state.auth);
     const navigate = useNavigate();
 
-    if (!authUser.isLogin) {
-        return <Navigate to={"/login"} />;
-    }
+    // if (!authUser.isLogin) {
+    //     return <Navigate to={"/login"} />;
+    // }
 
-    if (authUser.isLogin && authUser.user.role != "admin") {
-        navigate("/");
-    }
+    // if (authUser.isLogin && authUser.user.role != "admin") {
+    //     navigate("/");
+    // }
 
-    if (authUser.isLogin && authUser.user.role == "admin") {
-        return <Outlet />;
-    }
+    // if (authUser.isLogin && authUser.user.name == "Tamim khan") {
+    //     return <Outlet />;
+    // }
 
-    // return <Outlet />;
+    return <Outlet />;
 }

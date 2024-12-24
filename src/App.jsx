@@ -35,12 +35,10 @@ export default function App() {
 
                     {/* ============ Category ================= */}
                     <Route path="index-category" element={<IndexCategory />} />
-                    <Route
-                        path="create-category"
+                    <Route path="create-category"
                         element={<CreateCategory />}
                     />
-                    <Route
-                        path="edit-category/:id"
+                    <Route path="edit-category/:id"
                         element={<CreateCategory />}
                     />
 
